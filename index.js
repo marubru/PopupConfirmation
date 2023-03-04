@@ -15,10 +15,13 @@ app.get('/', (req, res) => {
 app.post('/popup/confirmation', (req, res) => {
   setTimeout( _ => {
     if (Math.random() > 0.8) {
+      console.log('POST popup/confirmation ERR');
       return res.status(500).json({
         confirmationTracked: false
       })
     }
+
+    console.log('POST popup/confirmation OK');
     res.json({
       confirmationTracked: true
     })
@@ -28,8 +31,11 @@ app.post('/popup/confirmation', (req, res) => {
 app.get('/popup', (req, res) => {
   setTimeout( _ => {
     if (Math.random() > 0.8) {
+      console.log('GET popup ERR');
       return res.status(500).json({})
     }
+
+    console.log('GET popup OK');
     res.json({
       message: "<p>This is an important message which requires a confirmation.</p>"
     })
