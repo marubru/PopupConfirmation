@@ -1,3 +1,4 @@
+const expirationMins = 10;
 
 function initPopup() {
     const popupWrapper = document.createElement('div')
@@ -10,13 +11,14 @@ function initPopup() {
     
     const confirmationButton = document.createElement('button')
     confirmationButton.addEventListener('click', handleConfirmation)
+    confirmationButton.setAttribute('id', 'confirm')
     confirmationButton.innerHTML = "confirm"
 
     const message = document.createElement('div')
     message.innerHTML = "<h2>Please confirm that you read this.</h2>"
 
     const closeButton = document.createElement('span')
-    closeButton.setAttribute('class', 'close')
+    closeButton.setAttribute('id', 'close')
     closeButton.innerHTML = "&times;"
     closeButton.addEventListener('click', hidePopup)
 
@@ -37,10 +39,26 @@ function hidePopup() {
 }
 
 function handleConfirmation() {
+    localStorage.setItem('popup_confirm_timestamp', Date.now().toString());
     hidePopup()
 }
 
-document.addEventListener('DOMContentLoaded', function(){ 
-    initPopup()
-    showPopup()
+function isPopupRequired() {
+    const expiration = expirationMins * 60 * 1000;
+    const lastConfirmationTimestamp = parseInt(localStorage.getItem('popup_confirm_timestamp'));
+
+    // confirm button was not clicked yet
+    if (!lastConfirmationTimestamp) {
+        return true;
+    }
+
+    // if confirmation has expired, return true
+    return lastConfirmationTimestamp + expiration < Date.now();
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    if (isPopupRequired()) {
+        initPopup()
+        showPopup()
+    }
 }, false);
